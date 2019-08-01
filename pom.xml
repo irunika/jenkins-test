@@ -6,7 +6,7 @@
 
     <groupId>org.irunika.jenkins.test</groupId>
     <artifactId>jenkins-test</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.3-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
@@ -21,6 +21,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
+                <version>${maven.shadeplugin.version}</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
@@ -51,17 +52,46 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
                 <configuration>
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
             </plugin>
+
+            <plugin>
+                <groupId>com.spotify</groupId>
+                <artifactId>dockerfile-maven-plugin</artifactId>
+                <version>${dockerfile.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>default</id>
+                        <goals>
+                            <goal>build</goal>
+                            <goal>push</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <repository>${docker.registry.url}/${project.artifactId}</repository>
+                    <tag>${project.version}</tag>
+<!--                    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>-->
+<!--                    <skip>false</skip>-->
+                    <buildArgs>
+                        <JAR_FILE>${project.artifactId}-${project.version}.jar</JAR_FILE>
+                    </buildArgs>
+                </configuration>
+            </plugin>
+
         </plugins>
     </build>
 
     <properties>
+        <dockerfile.plugin.version>1.4.1</dockerfile.plugin.version>
+        <docker.registry.url>192.168.114.9:5000</docker.registry.url>
+        <maven.compiler.plugin.version>3.8.1</maven.compiler.plugin.version>
         <msf4j.version>2.6.2</msf4j.version>
-        <maven.shadeplugin.version>2.4.1</maven.shadeplugin.version>
+        <maven.shadeplugin.version>3.2.1</maven.shadeplugin.version>
     </properties>
 
 </project>
